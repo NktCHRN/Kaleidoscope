@@ -1,5 +1,13 @@
-﻿namespace DataAccess.Entities;
+﻿using DataAccess.Enums;
+
+namespace DataAccess.Entities;
 public class TextPostItemFormatting
 {
-    // TODO: Add TextPostItemFormattingType enum with bold and italic type.
+    public Guid Id { get; set; }
+    public int Start {  get; set; }
+    public int End { get; set; }
+    public TextPostItemFormattingType Formatting { get; set; }
+
+    public Guid TextPostItemId { get; set; }
+    public TextPostItem TextPostItem { get; set; } = null!;
 }
