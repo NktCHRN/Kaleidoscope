@@ -16,7 +16,7 @@ public class ImagePostItemConfiguration : IEntityTypeConfiguration<ImagePostItem
         builder.Property(e => e.InitialFileName)
             .HasMaxLength(256);
 
-        builder.Property(e => e.FileId)
+        builder.Property(e => e.LocalFileName)
             .HasMaxLength(128);
     }
 }

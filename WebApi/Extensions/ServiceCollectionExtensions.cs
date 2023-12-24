@@ -1,9 +1,11 @@
 ﻿using BusinessLogic.Abstractions;
 using BusinessLogic.Seeders;
 using DataAccess.Entities;
+using DataAccess.Options;
 using DataAccess.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 
 namespace WebApi.Extensions;
 
@@ -12,6 +14,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         return services
+            .AddOptions(configuration)
             .AddDatabase(configuration)
             .AddSeeders()
             .AddAuth(configuration)
@@ -20,10 +23,25 @@ public static class ServiceCollectionExtensions
             .AddSwaggerGen();
     }
 
-    public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        return services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorageOptions"));
+    }
+
+    private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         return services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DbConnectionString")));
+    }
+
+    private static IServiceCollection AddAzureServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAzureClients(clientBuilder =>
+        {
+            clientBuilder.AddBlobServiceClient(configuration.GetConnectionString("BlobStorageConnectionString"));
+        });
+        return services;
+
     }
 
     private static IServiceCollection AddSeeders(this IServiceCollection services)
@@ -31,7 +49,7 @@ public static class ServiceCollectionExtensions
         return services.AddScoped<IRoleSeeder, RoleSeeder>();
     }
 
-    public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddIdentity<User, IdentityRole<Guid>>(options =>
         {
@@ -51,7 +69,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddApiControllers(this IServiceCollection services)
+    private static IServiceCollection AddApiControllers(this IServiceCollection services)
     {
         services.AddControllers();
         return services;

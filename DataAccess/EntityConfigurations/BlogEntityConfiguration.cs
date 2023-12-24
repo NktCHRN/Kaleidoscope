@@ -19,7 +19,7 @@ public class BlogEntityConfiguration : IEntityTypeConfiguration<Blog>
         builder.Property(e => e.Description)
             .HasMaxLength(2000);
 
-        builder.Property(e => e.AvatarId)
+        builder.Property(e => e.AvatarLocalFileName)
             .HasMaxLength(128);
     }
 }
