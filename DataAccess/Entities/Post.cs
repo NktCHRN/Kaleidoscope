@@ -5,6 +5,7 @@ public class Post
     public DateTime CreatedAt { get; set; }
     public bool IsModidied { get; set; }
     public string NormalizedName { get; set; } = string.Empty;
+    public int NormalizedNameDuplicatesCount { get; set; }
 
     public Guid BlogId { get; set; }
     public Blog Blog { get; set; } = null!;

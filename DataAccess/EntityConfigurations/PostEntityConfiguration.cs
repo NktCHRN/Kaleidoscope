@@ -9,5 +9,8 @@ public class PostEntityConfiguration : IEntityTypeConfiguration<Post>
     {
         builder.Property(e => e.NormalizedName)
             .HasMaxLength(256);
+
+        builder.HasIndex(e => new { e.NormalizedName, e.NormalizedNameDuplicatesCount, e.BlogId })
+            .IsUnique(true);
     }
 }
