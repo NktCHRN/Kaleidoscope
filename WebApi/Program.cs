@@ -1,3 +1,4 @@
+using BusinessLogic.Abstractions;
 using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    using (var serviceScope = app.Services.CreateScope())
+    {
+        var roleSeeder = serviceScope.ServiceProvider.GetRequiredService<IRoleSeeder>();
+        await roleSeeder.SeedRolesAsync();
+    }
 }
 
 app.UseHttpsRedirection();
