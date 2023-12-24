@@ -3,6 +3,6 @@ public enum TextPostType
 {
     Header,
     SubHeader,
-    Localheader, 
+    LocalHeader, 
     Regular
 }
