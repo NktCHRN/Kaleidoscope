@@ -4,7 +4,7 @@ namespace DataAccess.Entities;
 public class User : IdentityUser<Guid>
 {
     public string Name { get; set; } = string.Empty;
-    public Guid? AvatarId { get; set; }
+    public string? AvatarId { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public Blog? Blog { get; set; }

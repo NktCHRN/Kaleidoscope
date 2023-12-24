@@ -9,5 +9,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         builder.Property(e => e.Name)
             .HasMaxLength(256);
+
+        builder.Property(e => e.AvatarId)
+            .HasMaxLength(128);
     }
 }
