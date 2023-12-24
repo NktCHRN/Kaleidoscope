@@ -11,4 +11,5 @@ public class User : IdentityUser<Guid>
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     public ICollection<Like> Likes { get; set; } = new List<Like>();
     public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

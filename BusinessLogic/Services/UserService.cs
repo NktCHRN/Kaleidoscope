@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BusinessLogic.Abstractions;
-public interface IFakeService
+namespace BusinessLogic.Services;
+internal class UserService
 {
 }

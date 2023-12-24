@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Abstractions;
+using BusinessLogic.Options;
 using BusinessLogic.Seeders;
 using DataAccess.Abstractions;
 using DataAccess.Entities;
@@ -8,6 +9,7 @@ using DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WebApi.Extensions;
 
@@ -29,7 +31,8 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
     {
-        return services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorageOptions"));
+        return services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorageOptions"))
+            .Configure<JwtBearerConfigOptions>(configuration.GetSection("JwtBearer"));
     }
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
