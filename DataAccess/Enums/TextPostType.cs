@@ -4,6 +4,5 @@ public enum TextPostType
     Header,
     SubHeader,
     Localheader, 
-    Regular, 
-    Quotation
+    Regular
 }
