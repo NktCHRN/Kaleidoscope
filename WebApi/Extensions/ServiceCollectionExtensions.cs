@@ -1,8 +1,10 @@
 ﻿using BusinessLogic.Abstractions;
 using BusinessLogic.Seeders;
+using DataAccess.Abstractions;
 using DataAccess.Entities;
 using DataAccess.Options;
 using DataAccess.Persistence;
+using DataAccess.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
@@ -16,6 +18,8 @@ public static class ServiceCollectionExtensions
         return services
             .AddOptions(configuration)
             .AddDatabase(configuration)
+            .AddAzureServices(configuration)
+            .AddRepositories()
             .AddSeeders()
             .AddAuth(configuration)
             .AddApiControllers()
@@ -42,6 +46,12 @@ public static class ServiceCollectionExtensions
         });
         return services;
 
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        return services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>))
+            .AddSingleton<IBlobRepository, BlobRepository>();
     }
 
     private static IServiceCollection AddSeeders(this IServiceCollection services)
