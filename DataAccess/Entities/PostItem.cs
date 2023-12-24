@@ -1,5 +1,5 @@
 ﻿namespace DataAccess.Entities;
-public class PostItem
+public abstract class PostItem
 {
     public Guid Id { get; set; }
 
