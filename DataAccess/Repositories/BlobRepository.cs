@@ -81,6 +81,6 @@ public class BlobRepository : IBlobRepository
         var extension = Path.GetExtension(file.Name);
         using var stream = file.Data.ToStream();
         var hash = SHA256.HashData(stream);
-        return $"{Encoding.UTF8.GetString(hash)}{extension}";
+        return $"{Convert.ToBase64String(hash)}{extension}";
     }
 }
