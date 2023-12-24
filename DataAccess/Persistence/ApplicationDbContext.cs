@@ -31,9 +31,16 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
         {
             foreach (var property in entityType.GetProperties())
             {
-                if (property.ClrType.IsEnum || Nullable.GetUnderlyingType(property.ClrType)?.IsEnum is true)
+                if (property.ClrType.IsEnum)
                 {
                     var type = typeof(EnumToStringConverter<>).MakeGenericType(property.ClrType);
+                    var converter = Activator.CreateInstance(type, new ConverterMappingHints()) as ValueConverter;
+
+                    property.SetValueConverter(converter);
+                }
+                else if (Nullable.GetUnderlyingType(property.ClrType)?.IsEnum is true)
+                {
+                    var type = typeof(EnumToStringConverter<>).MakeGenericType(Nullable.GetUnderlyingType(property.ClrType)!);
                     var converter = Activator.CreateInstance(type, new ConverterMappingHints()) as ValueConverter;
 
                     property.SetValueConverter(converter);
