@@ -73,7 +73,7 @@ public class PostService : IPostService
         post.Subheader = postDto.Subheader;
         post.IsModidied = true;
 
-        var postItemsToDelete = post.PostItems.Where(p => !post.PostItems.Any(i => i.Id == p.Id)).ToList();
+        var postItemsToDelete = post.PostItems.Where(p => !postDto.PostItems.Any(i => i.Id == p.Id)).ToList();
 
         foreach (var postItem in postItemsToDelete)
         {
@@ -93,7 +93,7 @@ public class PostService : IPostService
             }
             else
             {
-                postItem = _mapper.Map<PostItem>(postDto);
+                postItem = _mapper.Map<PostItem>(postItemDto);
                 postItem.Order = i;
                 post.PostItems.Add(postItem);
             }

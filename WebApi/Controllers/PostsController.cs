@@ -34,4 +34,16 @@ public class PostsController : ControllerBase
         var result = await _postService.Create(User.GetId().GetValueOrDefault(), blogId, _mapper.Map<CreatePostDto>(request));
         return StatusCode(201, _mapper.Map<PostResponse>(result));
     }
+
+    [Authorize(Roles = RolesConstants.Author)]
+    [HttpPut("{postId}")]
+    [ProducesResponseType(typeof(PostResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 404)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> Update(Guid postId, [FromBody] UpdatePostRequest request)
+    {
+        var result = await _postService.Update(User.GetId().GetValueOrDefault(), postId, _mapper.Map<UpdatePostDto>(request));
+        return Ok(_mapper.Map<PostResponse>(result));
+    }
 }
