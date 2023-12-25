@@ -27,6 +27,7 @@ public class BlogsController : ControllerBase
     [Authorize]
     [ProducesResponseType(typeof(BlogResponse), 201)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 409)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> Create([FromBody] CreateBlogRequest request)
     {

@@ -46,7 +46,8 @@ public class PostService : IPostService
         };
         for (var i = 0; i < postDto.PostItems.Count; i++)
         {
-            var postItem = _mapper.Map<PostItem>(postDto);
+            var postItem = _mapper.Map<PostItem>(postDto.PostItems[i]);
+            postItem.Id = Guid.Empty;
             postItem.Order = i;
             post.PostItems.Add(postItem);
         }

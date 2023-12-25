@@ -11,11 +11,17 @@ public class PostMapperProfile : Profile
         CreateMap<PostItemDto, PostItem>()
             .Include<ImagePostItemDto, ImagePostItem>()
             .Include<TextPostItemDto, TextPostItem>();
+        CreateMap<ImagePostItemDto, ImagePostItem>();
+        CreateMap<TextPostItemDto, TextPostItem>();
 
         CreateMap<Post, PostDto>()
             .ForMember(d => d.BlogTag, opt => opt.MapFrom(s => s.Blog.Tag));
         CreateMap<PostItem, PostItemDto>()
             .Include<ImagePostItem, ImagePostItemDto>()
             .Include<TextPostItem, TextPostItemDto>();
+        CreateMap<ImagePostItem, ImagePostItemDto>();
+        CreateMap<TextPostItem, TextPostItemDto>();
+
+        CreateMap<Post, PostTitleDto>();
     }
 }

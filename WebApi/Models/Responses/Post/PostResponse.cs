@@ -1,5 +1,6 @@
-﻿namespace BusinessLogic.Dtos;
-public record PostDto
+﻿namespace WebApi.Models.Responses.Post;
+
+public record PostResponse
 {
     public Guid Id { get; set; }
     public string Header { get; set; } = string.Empty;
@@ -7,5 +8,5 @@ public record PostDto
     public DateTimeOffset CreatedAt { get; set; }
     public bool IsModidied { get; set; }
     public string BlogTag { get; set; } = string.Empty;
-    public ICollection<PostItemDto> PostItems { get; set; } = new List<PostItemDto>();
+    public ICollection<PostItemResponse> PostItems { get; set; } = new List<PostItemResponse>();
 }
