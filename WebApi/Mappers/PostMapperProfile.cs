@@ -24,5 +24,7 @@ public class PostMapperProfile : Profile
             .Include<ImagePostItemDto, ImagePostItemResponse>();
         CreateMap<TextPostItemDto, TextPostItemResponse>();
         CreateMap<ImagePostItemDto, ImagePostItemResponse>();
+
+        CreateMap<PostTitleDto, PostTitleResponse>();
     }
 }

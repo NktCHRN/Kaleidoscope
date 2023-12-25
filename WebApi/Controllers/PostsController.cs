@@ -5,6 +5,7 @@ using BusinessLogic.Dtos;
 using BusinessLogic.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Models.Common;
 using WebApi.Models.Requests.Post;
 using WebApi.Models.Responses.Common;
 using WebApi.Models.Responses.Post;
@@ -62,9 +63,20 @@ public class PostsController : ControllerBase
     [ProducesResponseType(typeof(PostResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 404)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
-    public async Task<IActionResult> Update(Guid postId)
+    public async Task<IActionResult> GetById(Guid postId)
     {
         var result = await _postService.GetById(postId);
         return Ok(_mapper.Map<PostResponse>(result));
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(PagedResponse<PostTitleDto, PaginationParametersApiModel>), 200)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> GetPaged([FromQuery] PaginationParametersApiModel parameters)
+    {
+        var result = await _postService.GetPaged(_mapper.Map<PaginationParametersDto>(parameters));
+
+        return Ok(_mapper.Map<PagedResponse<PostTitleDto, PaginationParametersApiModel>>(result));
     }
 }

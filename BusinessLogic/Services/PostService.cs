@@ -15,14 +15,16 @@ public class PostService : IPostService
     private readonly IMapper _mapper;
     private readonly IValidator<CreatePostDto> _createValidator;
     private readonly IValidator<UpdatePostDto> _updateValidator;
+    private readonly IValidator<PaginationParametersDto> _paginationValidator;
 
-    public PostService(IRepository<Blog> blogRepository, IRepository<Post> postRepository, IMapper mapper, IValidator<CreatePostDto> createValidator, IValidator<UpdatePostDto> updateValidator)
+    public PostService(IRepository<Blog> blogRepository, IRepository<Post> postRepository, IMapper mapper, IValidator<CreatePostDto> createValidator, IValidator<UpdatePostDto> updateValidator, IValidator<PaginationParametersDto> paginationValidator)
     {
         _blogRepository = blogRepository;
         _postRepository = postRepository;
         _mapper = mapper;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
+        _paginationValidator = paginationValidator;
     }
 
     public async Task<PostDto> Create(Guid userId, Guid blogId, CreatePostDto postDto)
@@ -128,5 +130,22 @@ public class PostService : IPostService
         var post = await _postRepository.FirstOrDefaultAsync(new PostByIdNoTrackingSpec(postId))
             ?? throw new EntityNotFoundException($"Post with id {postId} was not found.");
         return _mapper.Map<PostDto>(post);
+    }
+
+    public async Task<PagedDto<PostTitleDto, PaginationParametersDto>> GetPaged(PaginationParametersDto parameters)
+    {
+        var validationResults = _paginationValidator.Validate(parameters);
+        if (!validationResults.IsValid)
+        {
+            throw new EntityValidationFailedException(validationResults.Errors);
+        }
+
+        var posts = await _postRepository.ListAsync(new PagedPostsSpec(parameters.PerPage, parameters.Page));
+
+        return new PagedDto<PostTitleDto, PaginationParametersDto>
+        {
+            Data = _mapper.Map<IEnumerable<PostTitleDto>>(posts),
+            PaginationParameters = parameters,
+        };
     }
 }

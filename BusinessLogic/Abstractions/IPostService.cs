@@ -7,4 +7,5 @@ public interface IPostService
     Task<PostDto> Update(Guid userId, Guid postId, UpdatePostDto postDto);
     Task Delete(Guid userId, Guid postId);
     Task<PostDto> GetById(Guid postId);
+    Task<PagedDto<PostTitleDto, PaginationParametersDto>> GetPaged(PaginationParametersDto parameters);
 }

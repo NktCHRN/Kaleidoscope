@@ -8,5 +8,7 @@ public class BlogMapperProfile : Profile
     public BlogMapperProfile()
     {
         CreateMap<Blog, BlogDto>();
+
+        CreateMap<Blog, BlogTitleDto>();
     }
 }

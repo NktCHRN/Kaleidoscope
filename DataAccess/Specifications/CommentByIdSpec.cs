@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataAccess.Specifications;
-internal class CommentById
+internal class CommentByIdSpec
 {
 }

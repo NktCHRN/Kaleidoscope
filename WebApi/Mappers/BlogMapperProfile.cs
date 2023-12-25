@@ -13,5 +13,7 @@ public class BlogMapperProfile : Profile
         CreateMap<UpdateBlogRequest, UpdateBlogDto>();
 
         CreateMap<BlogDto, BlogResponse>();
+
+        CreateMap<BlogTitleDto, BlogTitleResponse>();
     }
 }
