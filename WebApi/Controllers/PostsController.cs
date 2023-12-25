@@ -46,4 +46,15 @@ public class PostsController : ControllerBase
         var result = await _postService.Update(User.GetId().GetValueOrDefault(), postId, _mapper.Map<UpdatePostDto>(request));
         return Ok(_mapper.Map<PostResponse>(result));
     }
+
+    [Authorize(Roles = RolesConstants.Author)]
+    [HttpDelete("{postId}")]
+    [ProducesResponseType(typeof(PostResponse), 204)]
+    [ProducesResponseType(typeof(ErrorResponse), 404)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> Delete(Guid postId)
+    {
+        await _postService.Delete(User.GetId().GetValueOrDefault(), postId);
+        return NoContent();
+    }
 }
