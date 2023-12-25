@@ -89,7 +89,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<IAccountService, AccountService>()
             .AddSingleton<IImageService, ImageService>()
             .AddScoped<IBlogService, BlogService>()
-            .AddScoped<IPostService, PostService>();
+            .AddScoped<IPostService, PostService>()
+            .AddScoped<ICommentService, CommentService>();
     }
 
     private static IServiceCollection AddSeeders(this IServiceCollection services)
