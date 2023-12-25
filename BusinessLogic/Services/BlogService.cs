@@ -5,7 +5,6 @@ using BusinessLogic.Dtos;
 using BusinessLogic.Exceptions;
 using DataAccess.Abstractions;
 using DataAccess.Entities;
-using DataAccess.Repositories;
 using DataAccess.Specifications;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
@@ -69,7 +68,7 @@ public class BlogService : IBlogService
         return _mapper.Map<BlogDto>(user.Blog);
     }
 
-    public async Task<BlogDto> Update(Guid blogId, UpdateBlogDto updateBlogDto)
+    public async Task<BlogDto> Update(Guid userId, Guid blogId, UpdateBlogDto updateBlogDto)
     {
         var validationResults = _updateValidator.Validate(updateBlogDto);
         if (!validationResults.IsValid)
@@ -79,6 +78,11 @@ public class BlogService : IBlogService
 
         var blog = await _blogRepository.FirstOrDefaultAsync(new BlogByIdSpec(blogId))
             ?? throw new EntityNotFoundException($"Blog with id {blogId} was not found.");
+
+        if (blog.UserId != userId)
+        {
+            throw new EntityValidationFailedException($"You cannot update this blog.");
+        }
 
         var tag = PrepareTag(updateBlogDto.Tag);
         if (tag != blog.Tag)
@@ -106,6 +110,14 @@ public class BlogService : IBlogService
 
         await _blogRepository.UpdateAsync(blog);
 
+        return _mapper.Map<BlogDto>(blog);
+    }
+
+    public async Task<BlogDto> GetByTag(string tag)
+    {
+        tag = PrepareTag(tag);
+        var blog = await _blogRepository.FirstOrDefaultAsync(new BlogByTagSpec(tag))
+            ?? throw new EntityNotFoundException($"Blog with tag {tag} was not found.");
         return _mapper.Map<BlogDto>(blog);
     }
 

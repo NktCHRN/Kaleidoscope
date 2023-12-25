@@ -6,6 +6,6 @@ public class BlogByTagSpec : SingleResultSpecification<Blog>
 {
     public BlogByTagSpec(string tag)
     {
-        Query.Where(b => b.Tag == tag);
+        Query.AsNoTracking().Where(b => b.Tag == tag);
     }
 }

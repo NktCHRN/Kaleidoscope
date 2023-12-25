@@ -43,7 +43,18 @@ public class BlogsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> Update(Guid id, [FromBody]UpdateBlogRequest request)
     {
-        var result = await _blogService.Update(id, _mapper.Map<UpdateBlogDto>(request));
+        var result = await _blogService.Update(User.GetId().GetValueOrDefault(), id, _mapper.Map<UpdateBlogDto>(request));
+
+        return Ok(_mapper.Map<BlogResponse>(result));
+    }
+
+    [HttpGet("{tag}")]
+    [ProducesResponseType(typeof(BlogResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponse), 404)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> GetByTag(string tag)
+    {
+        var result = await _blogService.GetByTag(tag);
 
         return Ok(_mapper.Map<BlogResponse>(result));
     }
