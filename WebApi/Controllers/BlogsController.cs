@@ -37,8 +37,9 @@ public class BlogsController : ControllerBase
 
     [HttpPut("{id}")]
     [Authorize]
-    [ProducesResponseType(typeof(BlogResponse), 201)]
+    [ProducesResponseType(typeof(BlogResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 404)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> Update(Guid id, [FromBody]UpdateBlogRequest request)
     {
