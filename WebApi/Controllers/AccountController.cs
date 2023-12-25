@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BusinessLogic.Abstractions;
 using BusinessLogic.Dtos;
+using BusinessLogic.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Requests.Account;
 using WebApi.Models.Responses.Account;
@@ -12,12 +14,14 @@ namespace WebApi.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _userService;
+    private readonly IRefreshTokenService _refreshTokenService;
     private readonly IMapper _mapper;
 
-    public AccountController(IAccountService userService, IMapper mapper)
+    public AccountController(IAccountService userService, IMapper mapper, IRefreshTokenService refreshTokenService)
     {
         _userService = userService;
         _mapper = mapper;
+        _refreshTokenService = refreshTokenService;
     }
 
     [HttpPost("register")]
@@ -46,5 +50,28 @@ public class AccountController : ControllerBase
         }
 
         return Ok(_mapper.Map<TokensResponse>(result.Tokens));
+    }
+
+    [HttpPost("tokens/refresh")]
+    [ProducesResponseType(typeof(TokensResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> RefreshTokens([FromBody] TokensRequest request)
+    {
+        var result = await _refreshTokenService.Refresh(_mapper.Map<TokensDto>(request));
+
+        return Ok(_mapper.Map<TokensResponse>(result));
+    }
+
+    [Authorize]
+    [HttpDelete("tokens/revoke")]
+    [ProducesResponseType(typeof(TokensResponse), 204)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequest request)
+    {
+        await _refreshTokenService.Revoke(User.GetId().GetValueOrDefault(), request.RefreshToken);
+
+        return NoContent();
     }
 }

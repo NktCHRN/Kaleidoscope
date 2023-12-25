@@ -12,6 +12,7 @@ public class AccountMapperProfile : Profile
         CreateMap<RegisterAccountRequest, RegisterAccountDto>();
         CreateMap<LoginAccountRequest, LoginAccountDto>();
 
+        CreateMap<TokensRequest, TokensDto>();
         CreateMap<TokensDto, TokensResponse>();
     }
 }
