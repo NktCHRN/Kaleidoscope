@@ -57,7 +57,7 @@ public class BlogService : IBlogService
         user.Blog = new Blog
         {
             AvatarLocalFileName = user.AvatarLocalFileName,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = DateTimeOffset.UtcNow,
             Description = createBlogDto.Description,
             Tag = tag,
             Name = user.Name
@@ -113,7 +113,7 @@ public class BlogService : IBlogService
         return _mapper.Map<BlogDto>(blog);
     }
 
-    public async Task<BlogDto> GetByTag(string tag)
+    public async Task<BlogDto> GetById(string tag)
     {
         tag = PrepareTag(tag);
         var blog = await _blogRepository.FirstOrDefaultAsync(new BlogByTagSpec(tag))

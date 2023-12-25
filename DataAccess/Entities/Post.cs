@@ -4,10 +4,8 @@ public class Post
     public Guid Id { get; set; }
     public string Header { get; set; } = string.Empty;
     public string? Subheader {  get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
     public bool IsModidied { get; set; }
-    public string NormalizedName { get; set; } = string.Empty;
-    public int NormalizedNameDuplicatesCount { get; set; }
 
     public Guid BlogId { get; set; }
     public Blog Blog { get; set; } = null!;

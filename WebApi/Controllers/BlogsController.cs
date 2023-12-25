@@ -54,7 +54,7 @@ public class BlogsController : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetByTag(string tag)
     {
-        var result = await _blogService.GetByTag(tag);
+        var result = await _blogService.GetById(tag);
 
         return Ok(_mapper.Map<BlogResponse>(result));
     }
