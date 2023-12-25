@@ -122,4 +122,11 @@ public class PostService : IPostService
             throw new EntityValidationFailedException("This post belongs to another user");
         }
     }
+
+    public async Task<PostDto> GetById(Guid postId)
+    {
+        var post = await _postRepository.FirstOrDefaultAsync(new PostByIdNoTrackingSpec(postId))
+            ?? throw new EntityNotFoundException($"Post with id {postId} was not found.");
+        return _mapper.Map<PostDto>(post);
+    }
 }
