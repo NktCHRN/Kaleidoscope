@@ -83,9 +83,10 @@ public class PostService : IPostService
         for (var i = 0; i < postDto.PostItems.Count; i++)
         {
             var postItemDto = postDto.PostItems[i];
-            var postItem = postItemDto.Id is null ? null : post.PostItems.FirstOrDefault(i => i.Id == postItemDto.Id);
-            if (postItem is not null)
+            if (postItemDto.Id is not null)
             {
+                var postItem = post.PostItems.FirstOrDefault(i => i.Id == postItemDto.Id) 
+                    ?? throw new EntityNotFoundException($"Post item with id {postItemDto.Id} is not part of the post {post.Id}");
                 var postItemId = postItem.Id;
                 _mapper.Map(postItemDto, postItem);
                 postItem.Id = postItemId;
@@ -93,7 +94,7 @@ public class PostService : IPostService
             }
             else
             {
-                postItem = _mapper.Map<PostItem>(postItemDto);
+                var postItem = _mapper.Map<PostItem>(postItemDto);
                 postItem.Order = i;
                 post.PostItems.Add(postItem);
             }
@@ -101,6 +102,7 @@ public class PostService : IPostService
 
         await _postRepository.UpdateAsync(post);
 
+        post.PostItems = post.PostItems.OrderBy(i => i.Order).ToList();
         return _mapper.Map<PostDto>(post);
     }
 
