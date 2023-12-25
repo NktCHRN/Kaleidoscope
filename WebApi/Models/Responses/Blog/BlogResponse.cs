@@ -1,5 +1,6 @@
-﻿namespace BusinessLogic.Dtos;
-public record BlogDto
+﻿namespace WebApi.Models.Responses.Blog;
+
+public class BlogResponse
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

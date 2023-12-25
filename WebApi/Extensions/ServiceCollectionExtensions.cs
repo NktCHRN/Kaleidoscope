@@ -86,7 +86,8 @@ public static class ServiceCollectionExtensions
         return services.AddScoped<IJwtTokenProvider, JwtTokenProvider>()
             .AddScoped<IRefreshTokenService, RefreshTokenService>()
             .AddScoped<IAccountService, AccountService>()
-            .AddSingleton<IImageService, ImageService>();
+            .AddSingleton<IImageService, ImageService>()
+            .AddScoped<IBlogService, BlogService>();
     }
 
     private static IServiceCollection AddSeeders(this IServiceCollection services)

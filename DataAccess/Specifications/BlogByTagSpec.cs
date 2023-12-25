@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ardalis.Specification;
+using DataAccess.Entities;
 
 namespace DataAccess.Specifications;
-internal class BlogByTagSpec
+public class BlogByTagSpec : SingleResultSpecification<Blog>
 {
+    public BlogByTagSpec(string tag)
+    {
+        Query.Where(b => b.Tag == tag);
+    }
 }
