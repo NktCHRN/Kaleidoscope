@@ -10,6 +10,7 @@ public class BlogMapperProfile : Profile
     public BlogMapperProfile() 
     {
         CreateMap<CreateBlogRequest, CreateBlogDto>();
+        CreateMap<UpdateBlogRequest, UpdateBlogDto>();
 
         CreateMap<BlogDto, BlogResponse>();
     }

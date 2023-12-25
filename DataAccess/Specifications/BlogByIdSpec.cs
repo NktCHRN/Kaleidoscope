@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ardalis.Specification;
+using DataAccess.Entities;
 
 namespace DataAccess.Specifications;
-internal class BlogByIdSpec
+public class BlogByIdSpec : SingleResultSpecification<Blog>
 {
+    public BlogByIdSpec(Guid id)
+    {
+        Query
+            .Include(b => b.User)
+            .Where(b => b.Id == id);
+    }
 }

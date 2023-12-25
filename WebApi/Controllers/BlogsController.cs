@@ -28,10 +28,22 @@ public class BlogsController : ControllerBase
     [ProducesResponseType(typeof(BlogResponse), 201)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
-    public async Task<IActionResult> Create(CreateBlogRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateBlogRequest request)
     {
         var result = await _blogService.Create(User.GetId().GetValueOrDefault(), _mapper.Map<CreateBlogDto>(request));
 
         return StatusCode(201, _mapper.Map<BlogResponse>(result));
+    }
+
+    [HttpPut("{id}")]
+    [Authorize]
+    [ProducesResponseType(typeof(BlogResponse), 201)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> Update(Guid id, [FromBody]UpdateBlogRequest request)
+    {
+        var result = await _blogService.Update(id, _mapper.Map<UpdateBlogDto>(request));
+
+        return Ok(_mapper.Map<BlogResponse>(result));
     }
 }
