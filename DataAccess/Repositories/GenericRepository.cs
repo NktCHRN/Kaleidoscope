@@ -1,11 +1,11 @@
 ﻿using Ardalis.Specification.EntityFrameworkCore;
 using DataAccess.Abstractions;
-using Microsoft.EntityFrameworkCore;
+using DataAccess.Persistence;
 
 namespace DataAccess.Repositories;
 public class GenericRepository<T> : RepositoryBase<T>, IRepository<T> where T : class
 {
-    public GenericRepository(DbContext dbContext) : base(dbContext)
+    public GenericRepository(ApplicationDbContext dbContext) : base(dbContext)
     {
     }
 }

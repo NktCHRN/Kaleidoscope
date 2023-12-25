@@ -11,15 +11,15 @@ using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace BusinessLogic.Services;
-public class UserService : IUserService
+public class AccountService : IAccountService
 {
     private readonly IJwtTokenProvider _jwtTokenProvider;
     private readonly UserManager<User> _userManager;
-    private readonly IValidator<RegisterUserDto> _validator;
+    private readonly IValidator<RegisterAccountDto> _validator;
     private readonly IRepository<RefreshToken> _refreshTokenRepository;
     private readonly IOptions<TokenProvidersOptions> _tokenProvidersOptions;
 
-    public UserService(UserManager<User> userManager, IValidator<RegisterUserDto> validator, IJwtTokenProvider jwtTokenProvider, IRepository<RefreshToken> refreshTokenRepository, IOptions<TokenProvidersOptions> tokenProvidersOptions)
+    public AccountService(UserManager<User> userManager, IValidator<RegisterAccountDto> validator, IJwtTokenProvider jwtTokenProvider, IRepository<RefreshToken> refreshTokenRepository, IOptions<TokenProvidersOptions> tokenProvidersOptions)
     {
         _userManager = userManager;
         _validator = validator;
@@ -28,7 +28,7 @@ public class UserService : IUserService
         _tokenProvidersOptions = tokenProvidersOptions;
     }
 
-    public async Task<LoginResultDto> Login(LoginUserDto loginUserDto)
+    public async Task<LoginResultDto> Login(LoginAccountDto loginUserDto)
     {
         var user = await _userManager.FindByNameAsync(loginUserDto.Email);
         if (!await _userManager.CheckPasswordAsync(user!, loginUserDto.Password))
@@ -72,7 +72,7 @@ public class UserService : IUserService
         return claims;
     }
 
-    public async Task<UserDto> Register(RegisterUserDto userDto)
+    public async Task<UserDto> Register(RegisterAccountDto userDto)
     {
         var validationResults = _validator.Validate(userDto);
         if (!validationResults.IsValid)

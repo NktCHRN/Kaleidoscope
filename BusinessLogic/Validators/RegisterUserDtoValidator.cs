@@ -2,7 +2,7 @@
 using FluentValidation;
 
 namespace BusinessLogic.Validators;
-public class RegisterUserDtoValidator : AbstractValidator<RegisterUserDto>
+public class RegisterUserDtoValidator : AbstractValidator<RegisterAccountDto>
 {
     public RegisterUserDtoValidator() 
     {

@@ -1,11 +1,12 @@
 using DataAccess.Abstractions;
 using DataAccess.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Controllers;
 [ApiController]
-[Route("[controller]")]
+[Route("weather")]
 public class WeatherForecastController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -25,6 +26,7 @@ public class WeatherForecastController : ControllerBase
         _blobRepository = blobRepository;
     }
 
+    [Authorize]
     [HttpGet(Name = "GetWeatherForecast")]
     public async Task<IEnumerable<WeatherForecast>> Get()
     {

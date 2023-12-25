@@ -1,5 +1,6 @@
-﻿namespace BusinessLogic.Dtos;
-public record RegisterUserDto
+﻿namespace WebApi.Models.Requests.Account;
+
+public record RegisterAccountRequest
 {
     public string Email { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
