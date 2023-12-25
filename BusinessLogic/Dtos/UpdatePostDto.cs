@@ -3,5 +3,5 @@ public record UpdatePostDto
 {
     public string Header { get; set; } = string.Empty;
     public string? Subheader { get; set; }
-    public ICollection<PostItemDto> PostItems { get; set; } = new List<PostItemDto>();
+    public IList<PostItemDto> PostItems { get; set; } = new List<PostItemDto>();
 }

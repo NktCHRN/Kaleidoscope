@@ -8,6 +8,6 @@ public class User : IdentityUser<Guid>
     public DateTimeOffset CreatedAt { get; set; }
 
     public Blog? Blog { get; set; }
-    public ICollection<Comment> Comments { get; set; } = new List<Comment>();
-    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+    public IList<Comment> Comments { get; set; } = new List<Comment>();
+    public IList<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

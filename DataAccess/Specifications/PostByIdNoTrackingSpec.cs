@@ -2,11 +2,12 @@
 using DataAccess.Entities;
 
 namespace DataAccess.Specifications;
-public class PostByIdSpec : SingleResultSpecification<Post>
+public class PostByIdNoTrackingSpec : SingleResultSpecification<Post>
 {
-    public PostByIdSpec(Guid id) 
+    public PostByIdNoTrackingSpec(Guid id)
     {
-        Query.Include(p => p.Blog)
+        Query.AsNoTracking()
+            .Include(p => p.Blog)
             .Include(p => p.PostItems.OrderBy(i => i.Order))
             .Where(p => p.Id == id);
     }

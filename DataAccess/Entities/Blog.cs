@@ -8,7 +8,7 @@ public class Blog
     public string? Description { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 
-    public ICollection<Post> Posts { get; set; } = new List<Post>();
+    public IList<Post> Posts { get; set; } = new List<Post>();
 
     public Guid UserId { get; set; }
     public User User { get; set; } = null!;

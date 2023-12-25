@@ -12,7 +12,8 @@ public class PostMapperProfile : Profile
             .Include<ImagePostItemDto, ImagePostItem>()
             .Include<TextPostItemDto, TextPostItem>();
 
-        CreateMap<Post, PostDto>();
+        CreateMap<Post, PostDto>()
+            .ForMember(d => d.BlogTag, opt => opt.MapFrom(s => s.Blog.Tag));
         CreateMap<PostItem, PostItemDto>()
             .Include<ImagePostItem, ImagePostItemDto>()
             .Include<TextPostItem, TextPostItemDto>();
