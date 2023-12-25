@@ -78,6 +78,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddValidators(this IServiceCollection services)
     {
+        ValidatorOptions.Global.LanguageManager.Enabled = false;
         return services.AddValidatorsFromAssemblyContaining<IBusinessLogicMarker>();
     }
 
