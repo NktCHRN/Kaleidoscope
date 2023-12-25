@@ -72,11 +72,9 @@ public class PostService : IPostService
         post.Subheader = postDto.Subheader;
         post.IsModidied = true;
 
-        var postItemDtosToAdd = postDto.PostItems.Where(p => p.Id is null).ToList();
-        var postItemDtosToUpdate = postDto.PostItems.Where(p => post.PostItems.Any(i => i.Id == p.Id)).ToList();
         var postItemsToDelete = post.PostItems.Where(p => !post.PostItems.Any(i => i.Id == p.Id)).ToList();
 
-        foreach (var postItem in postItemsToDelete )
+        foreach (var postItem in postItemsToDelete)
         {
             post.PostItems.Remove(postItem);
         }
