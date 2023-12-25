@@ -11,6 +11,7 @@ public class UserMapperProfile : Profile
     {
         CreateMap<UserDto, UserResponse>()
             .ForMember(d => d.AvatarFileName, opt => opt.MapFrom(s => s.AvatarLocalFileName));
+        CreateMap<UserTitleDto, UserTitleResponse>();
         CreateMap<UpdateUserRequest, UpdateUserDto>();
     }
 }

@@ -37,14 +37,14 @@ public class PostsController : ControllerBase
     }
 
     [HttpGet("~/api/blogs/{blogId}/posts")]
-    [ProducesResponseType(typeof(PagedResponse<PostTitleDto, PaginationParametersApiModel>), 200)]
+    [ProducesResponseType(typeof(PagedResponse<PostTitleResponse, PaginationParametersApiModel>), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetPagedByBlogId(Guid blogId, [FromQuery] PaginationParametersApiModel parameters)
     {
         var result = await _postService.GetPagedByBlogId(blogId, _mapper.Map<PaginationParametersDto>(parameters));
 
-        return Ok(_mapper.Map<PagedResponse<PostTitleDto, PaginationParametersApiModel>>(result));
+        return Ok(_mapper.Map<PagedResponse<PostTitleResponse, PaginationParametersApiModel>>(result));
     }
 
     [Authorize(Roles = RolesConstants.Author)]
@@ -81,13 +81,13 @@ public class PostsController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(PagedResponse<PostTitleDto, PaginationParametersApiModel>), 200)]
+    [ProducesResponseType(typeof(PagedResponse<PostTitleResponse, PaginationParametersApiModel>), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> GetPaged([FromQuery] PaginationParametersApiModel parameters)
     {
         var result = await _postService.GetPaged(_mapper.Map<PaginationParametersDto>(parameters));
 
-        return Ok(_mapper.Map<PagedResponse<PostTitleDto, PaginationParametersApiModel>>(result));
+        return Ok(_mapper.Map<PagedResponse<PostTitleResponse, PaginationParametersApiModel>>(result));
     }
 }
