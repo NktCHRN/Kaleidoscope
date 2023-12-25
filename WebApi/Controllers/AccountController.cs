@@ -67,7 +67,7 @@ public class AccountController : ControllerBase
 
     [Authorize]
     [HttpDelete("tokens/revoke")]
-    [ProducesResponseType(typeof(TokensResponse), 204)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequest request)

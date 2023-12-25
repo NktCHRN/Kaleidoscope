@@ -49,7 +49,7 @@ public class PostsController : ControllerBase
 
     [Authorize(Roles = RolesConstants.Author)]
     [HttpDelete("{postId}")]
-    [ProducesResponseType(typeof(PostResponse), 204)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ErrorResponse), 404)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
     public async Task<IActionResult> Delete(Guid postId)
