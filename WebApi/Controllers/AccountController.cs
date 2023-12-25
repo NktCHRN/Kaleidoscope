@@ -5,8 +5,10 @@ using BusinessLogic.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models.Requests.Account;
+using WebApi.Models.Requests.User;
 using WebApi.Models.Responses.Account;
 using WebApi.Models.Responses.Common;
+using WebApi.Models.Responses.User;
 
 namespace WebApi.Controllers;
 [ApiController]
@@ -73,5 +75,30 @@ public class AccountController : ControllerBase
         await _refreshTokenService.Revoke(User.GetId().GetValueOrDefault(), request.RefreshToken);
 
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpGet("details")]
+    [ProducesResponseType(typeof(UserResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponse), 404)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> GetDetails()
+    {
+        var result = await _userService.GetDetails(User.GetId().GetValueOrDefault());
+
+        return Ok(_mapper.Map<UserResponse>(result));
+    }
+
+    [Authorize]
+    [HttpPut("details")]
+    [ProducesResponseType(typeof(UserResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 404)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> UpdateDetails([FromBody] UpdateUserRequest request)
+    {
+        var result = await _userService.UpdateDetails(User.GetId().GetValueOrDefault(), _mapper.Map<UpdateUserDto>(request));
+
+        return Ok(_mapper.Map<UserResponse>(result));
     }
 }

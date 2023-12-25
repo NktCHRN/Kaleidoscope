@@ -2,11 +2,11 @@
 using DataAccess.Entities;
 
 namespace DataAccess.Specifications;
-public class UserByIdSpec : SingleResultSpecification<User>
+public class UserByIdNoTrackingSpec : SingleResultSpecification<User>
 {
-    public UserByIdSpec(Guid id)
+    public UserByIdNoTrackingSpec(Guid id)
     {
-        Query.Include(u => u.Blog)
+        Query.AsNoTracking()
             .Where(u => u.Id == id);
     }
 }
