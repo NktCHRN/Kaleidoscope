@@ -36,6 +36,17 @@ public class PostsController : ControllerBase
         return StatusCode(201, _mapper.Map<PostResponse>(result));
     }
 
+    [HttpGet("~/api/blogs/{blogId}/posts")]
+    [ProducesResponseType(typeof(PagedResponse<PostTitleDto, PaginationParametersApiModel>), 200)]
+    [ProducesResponseType(typeof(ErrorResponse), 400)]
+    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    public async Task<IActionResult> GetPagedByBlogId(Guid blogId, [FromQuery] PaginationParametersApiModel parameters)
+    {
+        var result = await _postService.GetPagedByBlogId(blogId, _mapper.Map<PaginationParametersDto>(parameters));
+
+        return Ok(_mapper.Map<PagedResponse<PostTitleDto, PaginationParametersApiModel>>(result));
+    }
+
     [Authorize(Roles = RolesConstants.Author)]
     [HttpPut("{postId}")]
     [ProducesResponseType(typeof(PostResponse), 200)]

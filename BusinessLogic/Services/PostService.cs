@@ -148,4 +148,21 @@ public class PostService : IPostService
             PaginationParameters = parameters,
         };
     }
+
+    public async Task<PagedDto<PostTitleDto, PaginationParametersDto>> GetPagedByBlogId(Guid blogId, PaginationParametersDto parameters)
+    {
+        var validationResults = _paginationValidator.Validate(parameters);
+        if (!validationResults.IsValid)
+        {
+            throw new EntityValidationFailedException(validationResults.Errors);
+        }
+
+        var posts = await _postRepository.ListAsync(new PagedPostsByBlogIdSpec(blogId, parameters.PerPage, parameters.Page));
+
+        return new PagedDto<PostTitleDto, PaginationParametersDto>
+        {
+            Data = _mapper.Map<IEnumerable<PostTitleDto>>(posts),
+            PaginationParameters = parameters,
+        };
+    }
 }

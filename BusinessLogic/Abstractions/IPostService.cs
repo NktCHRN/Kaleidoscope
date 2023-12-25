@@ -8,4 +8,5 @@ public interface IPostService
     Task Delete(Guid userId, Guid postId);
     Task<PostDto> GetById(Guid postId);
     Task<PagedDto<PostTitleDto, PaginationParametersDto>> GetPaged(PaginationParametersDto parameters);
+    Task<PagedDto<PostTitleDto, PaginationParametersDto>> GetPagedByBlogId(Guid blogId, PaginationParametersDto parameters);
 }
