@@ -32,7 +32,8 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
     {
         return services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorageOptions"))
-            .Configure<JwtBearerConfigOptions>(configuration.GetSection("JwtBearer"));
+            .Configure<JwtBearerConfigOptions>(configuration.GetSection("JwtBearer"))
+            .Configure<TokenProvidersOptions>(configuration.GetSection("TokenProvidersOptions"));
     }
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
