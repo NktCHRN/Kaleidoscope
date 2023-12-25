@@ -10,8 +10,6 @@ public class Blog
 
     public ICollection<Post> Posts { get; set; } = new List<Post>();
 
-    public ICollection<Subscription> Subscribers { get; set; } = new List<Subscription>();
-
     public Guid UserId { get; set; }
     public User User { get; set; } = null!;
 }

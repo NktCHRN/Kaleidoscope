@@ -12,5 +12,11 @@ public class PostEntityConfiguration : IEntityTypeConfiguration<Post>
 
         builder.HasIndex(e => new { e.NormalizedName, e.NormalizedNameDuplicatesCount, e.BlogId })
             .IsUnique(true);
+
+        builder.Property(e => e.Header)
+            .HasMaxLength(256);
+
+        builder.Property(e => e.Subheader)
+            .HasMaxLength(256);
     }
 }

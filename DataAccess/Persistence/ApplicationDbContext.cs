@@ -11,7 +11,6 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public DbSet<Blog> Blogs { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Post> Posts { get; set; }
-    public DbSet<Subscription> Subscriptions { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
