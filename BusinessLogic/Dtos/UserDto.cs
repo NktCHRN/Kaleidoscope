@@ -5,5 +5,5 @@ public record UserDto
     public string Email { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string? AvatarLocalFileName { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 }
