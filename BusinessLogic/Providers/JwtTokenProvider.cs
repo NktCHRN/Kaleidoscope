@@ -11,15 +11,17 @@ namespace BusinessLogic.Providers;
 public class JwtTokenProvider : IJwtTokenProvider
 {
     private readonly IOptions<JwtBearerConfigOptions> _options;
+    private readonly TimeProvider _timeProvider;
 
-    public JwtTokenProvider(IOptions<JwtBearerConfigOptions> options)
+    public JwtTokenProvider(IOptions<JwtBearerConfigOptions> options, TimeProvider timeProvider)
     {
         _options = options;
+        _timeProvider = timeProvider;
     }
 
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
-        var now = DateTime.UtcNow;
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
         var jwt = new JwtSecurityToken(
                 issuer: _options.Value.Issuer,
                 audience: _options.Value.Audience,

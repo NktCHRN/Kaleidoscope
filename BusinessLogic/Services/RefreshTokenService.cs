@@ -12,11 +12,13 @@ public class RefreshTokenService : IRefreshTokenService
 {
     private readonly IJwtTokenProvider _jwtTokenProvider;
     private readonly IRepository<RefreshToken> _refreshTokenRepository;
+    private readonly TimeProvider _timeProvider;
 
-    public RefreshTokenService(IJwtTokenProvider jwtTokenProvider, IRepository<RefreshToken> refreshTokenRepository)
+    public RefreshTokenService(IJwtTokenProvider jwtTokenProvider, IRepository<RefreshToken> refreshTokenRepository, TimeProvider timeProvider)
     {
         _jwtTokenProvider = jwtTokenProvider;
         _refreshTokenRepository = refreshTokenRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<TokensDto> Refresh(TokensDto tokens)
@@ -28,7 +30,7 @@ public class RefreshTokenService : IRefreshTokenService
             var refreshTokenDataModel = await _refreshTokenRepository.FirstOrDefaultAsync(new RefreshTokenByUserIdAndTokenSpec(userId, tokens.RefreshToken));
             if (refreshTokenDataModel is null
                 || refreshTokenDataModel.Token != tokens.RefreshToken
-                || refreshTokenDataModel.ExpiryTime <= DateTimeOffset.UtcNow)
+                || refreshTokenDataModel.ExpiryTime <= _timeProvider.GetUtcNow())
             {
                 throw new EntityValidationFailedException("Invalid client request");
             }

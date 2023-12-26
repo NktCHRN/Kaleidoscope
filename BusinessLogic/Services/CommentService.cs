@@ -17,8 +17,9 @@ public class CommentService : ICommentService
     private readonly IMapper _mapper;
     private readonly IRepository<Post> _postRepository;
     private readonly IRepository<User> _userRepository;
+    private readonly TimeProvider _timeProvider;
 
-    public CommentService(IRepository<Comment> commentRepository, IValidator<CreateCommentDto> createValidator, IValidator<UpdateCommentDto> updateValidator, IValidator<PaginationParametersDto> paginationValidator, IMapper mapper, IRepository<Post> postRepository, IRepository<User> userRepository)
+    public CommentService(IRepository<Comment> commentRepository, IValidator<CreateCommentDto> createValidator, IValidator<UpdateCommentDto> updateValidator, IValidator<PaginationParametersDto> paginationValidator, IMapper mapper, IRepository<Post> postRepository, IRepository<User> userRepository, TimeProvider timeProvider)
     {
         _commentRepository = commentRepository;
         _createValidator = createValidator;
@@ -27,6 +28,7 @@ public class CommentService : ICommentService
         _mapper = mapper;
         _postRepository = postRepository;
         _userRepository = userRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<CommentDto> Create(Guid userId, Guid postId, CreateCommentDto postDto)
@@ -43,7 +45,7 @@ public class CommentService : ICommentService
 
         var comment = new Comment
         {
-            CreatedAt = DateTimeOffset.UtcNow,
+            CreatedAt = _timeProvider.GetUtcNow(),
             Post = post,
             User = user,
             Text = postDto.Text

@@ -19,8 +19,9 @@ public class BlogService : IBlogService
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
     private readonly IBlobRepository _blobRepository;
+    private readonly TimeProvider _timeProvider;
 
-    public BlogService(IValidator<CreateBlogDto> createValidator, IValidator<UpdateBlogDto> updateValidator, IRepository<Blog> blogRepository, UserManager<User> userManager, IMapper mapper, IRepository<User> userRepository, IBlobRepository blobRepository)
+    public BlogService(IValidator<CreateBlogDto> createValidator, IValidator<UpdateBlogDto> updateValidator, IRepository<Blog> blogRepository, UserManager<User> userManager, IMapper mapper, IRepository<User> userRepository, IBlobRepository blobRepository, TimeProvider timeProvider)
     {
         _createValidator = createValidator;
         _updateValidator = updateValidator;
@@ -29,6 +30,7 @@ public class BlogService : IBlogService
         _mapper = mapper;
         _userRepository = userRepository;
         _blobRepository = blobRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<BlogDto> Create(Guid userId, CreateBlogDto createBlogDto)
@@ -57,7 +59,7 @@ public class BlogService : IBlogService
         user.Blog = new Blog
         {
             AvatarLocalFileName = user.AvatarLocalFileName,
-            CreatedAt = DateTimeOffset.UtcNow,
+            CreatedAt = _timeProvider.GetUtcNow(),
             Description = createBlogDto.Description,
             Tag = tag,
             Name = user.Name
