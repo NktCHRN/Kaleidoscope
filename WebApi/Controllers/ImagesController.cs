@@ -9,7 +9,6 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class ImagesController : ControllerBase
 {
     private readonly IImageService _imageService;
@@ -30,6 +29,7 @@ public class ImagesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     [ProducesResponseType(typeof(FileUploadedResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
