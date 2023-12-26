@@ -19,7 +19,7 @@ public class AccountService : IAccountService
     private readonly UserManager<User> _userManager;
     private readonly IValidator<RegisterAccountDto> _registerValidator;
     private readonly IRepository<RefreshToken> _refreshTokenRepository;
-    private readonly IOptions<TokenProvidersOptions> _tokenProvidersOptions;
+    private readonly TokenProvidersOptions _tokenProvidersOptions;
     private readonly IRepository<User> _userRepository;
     private readonly IValidator<UpdateUserDto> _updateUserValidator;
     private readonly IBlobRepository _blobRepository;
@@ -32,7 +32,7 @@ public class AccountService : IAccountService
         _registerValidator = validator;
         _jwtTokenProvider = jwtTokenProvider;
         _refreshTokenRepository = refreshTokenRepository;
-        _tokenProvidersOptions = tokenProvidersOptions;
+        _tokenProvidersOptions = tokenProvidersOptions.Value;
         _userRepository = userRepository;
         _updateUserValidator = updateUserValidator;
         _mapper = mapper;
@@ -57,7 +57,7 @@ public class AccountService : IAccountService
         {
             Token = refreshToken,
             UserId = user!.Id,
-            ExpiryTime = _timeProvider.GetUtcNow().AddDays(_tokenProvidersOptions.Value.RefreshTokenLifetimeInDays)
+            ExpiryTime = _timeProvider.GetUtcNow().AddDays(_tokenProvidersOptions.RefreshTokenLifetimeInDays)
         });
         return new LoginResultDto()
         {

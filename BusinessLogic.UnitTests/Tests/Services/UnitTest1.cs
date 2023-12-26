@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace BusinessLogic.UnitTests.Tests;
+namespace BusinessLogic.UnitTests.Tests.Services;
 
 public class UnitTest1
 {

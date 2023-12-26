@@ -10,12 +10,12 @@ namespace DataAccess.Repositories;
 public class BlobRepository : IBlobRepository
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly IOptions<BlobStorageOptions> _options;
+    private readonly BlobStorageOptions _options;
 
     public BlobRepository(BlobServiceClient blobServiceClient, IOptions<BlobStorageOptions> options)
     {
         _blobServiceClient = blobServiceClient;
-        _options = options;
+        _options = options.Value;
     }
 
     public async Task<bool> ExistsAsync(string fileName)
@@ -71,7 +71,7 @@ public class BlobRepository : IBlobRepository
     private BlobClient GetBlobClient(string fileName)
     {
         var containerClient =
-            _blobServiceClient.GetBlobContainerClient(_options.Value.ContainerName);
+            _blobServiceClient.GetBlobContainerClient(_options.ContainerName);
         return containerClient.GetBlobClient($"images/{fileName}");
     }
 
