@@ -12,10 +12,7 @@ public class RandomRelayCustomization : ISpecimenBuilder
 
     public RandomRelayCustomization(IEnumerable<ISpecimenBuilder> builders)
     {
-        if (builders is null)
-        {
-            throw new ArgumentNullException(nameof(builders));
-        }
+        ArgumentNullException.ThrowIfNull(builders);
 
         _builders = builders.ToList();
     }
