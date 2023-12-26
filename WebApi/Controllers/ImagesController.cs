@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.Abstractions;
+using BusinessLogic.Constants;
 using BusinessLogic.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ public class ImagesController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = RolesConstants.Author)]
     [ProducesResponseType(typeof(FileUploadedResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
@@ -38,7 +39,7 @@ public class ImagesController : ControllerBase
         var fileDto = new MediaFileDto
         {
             ContentType = file.ContentType,
-            Name = file.Name,
+            Name = file.FileName,
             Data = BinaryData.FromStream(file.OpenReadStream())
         };
 
