@@ -46,7 +46,7 @@ public class BlogService : IBlogService
 
         if (user.Blog is not null)
         {
-            throw new EntityValidationFailedException("User already has a blog.");
+            throw new EntityAlreadyExistsException("User already has a blog.");
         }
 
         var tag = PrepareTag(createBlogDto.Tag);
@@ -115,7 +115,7 @@ public class BlogService : IBlogService
         return _mapper.Map<BlogDto>(blog);
     }
 
-    public async Task<BlogDto> GetById(string tag)
+    public async Task<BlogDto> GetByTag(string tag)
     {
         tag = PrepareTag(tag);
         var blog = await _blogRepository.FirstOrDefaultAsync(new BlogByTagSpec(tag))
