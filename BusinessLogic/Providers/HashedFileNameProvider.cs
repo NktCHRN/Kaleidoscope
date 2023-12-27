@@ -9,6 +9,7 @@ public class HashedFileNameProvider : IHashedFileNameProvider
         var extension = Path.GetExtension(initialFileName);
         using var stream = file.ToStream();
         var hash = SHA256.HashData(stream);
-        return $"{Convert.ToBase64String(hash)}{extension}";
+        return $"{Convert.ToBase64String(hash).Replace('/', '-')}{extension}";      // Slashed are currently forbidden
+                                                                                    // or treated as separator between folder name and file name.
     }
 }
