@@ -86,6 +86,7 @@ public static class ServiceCollectionExtensions
     {
         return services.AddScoped<IJwtTokenProvider, JwtTokenProvider>()
             .AddSingleton<IImageInfoProvider, ImageInfoProvider>()
+            .AddSingleton<IHashedFileNameProvider, HashedFileNameProvider>()
             .AddScoped<IRefreshTokenService, RefreshTokenService>()
             .AddScoped<IAccountService, AccountService>()
             .AddSingleton<IImageService, ImageService>()

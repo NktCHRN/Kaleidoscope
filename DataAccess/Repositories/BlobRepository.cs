@@ -4,7 +4,6 @@ using DataAccess.Abstractions;
 using DataAccess.Common;
 using DataAccess.Options;
 using Microsoft.Extensions.Options;
-using System.Security.Cryptography;
 
 namespace DataAccess.Repositories;
 public class BlobRepository : IBlobRepository
@@ -45,16 +44,14 @@ public class BlobRepository : IBlobRepository
         };
     }
 
-    public async Task<string> UploadPhotoAsync(MediaFile file)
+    public async Task UploadPhotoAsync(MediaFile file)
     {
-        var fileName = GenerateName(file);
-
-        var blobClient = GetBlobClient(fileName);
+        var blobClient = GetBlobClient(file.Name);
 
         var fileAlreadyExists = await blobClient.ExistsAsync();
         if (fileAlreadyExists)
         {
-            return fileName;
+            return;
         }
 
         await blobClient.UploadAsync(file.Data, new BlobUploadOptions
@@ -65,7 +62,7 @@ public class BlobRepository : IBlobRepository
             }
         });
 
-        return fileName;
+        return;
     }
 
     private BlobClient GetBlobClient(string fileName)
@@ -73,13 +70,5 @@ public class BlobRepository : IBlobRepository
         var containerClient =
             _blobServiceClient.GetBlobContainerClient(_options.ContainerName);
         return containerClient.GetBlobClient($"images/{fileName}");
-    }
-
-    private static string GenerateName(MediaFile file)
-    {
-        var extension = Path.GetExtension(file.Name);
-        using var stream = file.Data.ToStream();
-        var hash = SHA256.HashData(stream);
-        return $"{Convert.ToBase64String(hash)}{extension}";
     }
 }
