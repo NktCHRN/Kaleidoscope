@@ -9,10 +9,12 @@ namespace BusinessLogic.Services;
 public class ImageService : IImageService
 {
     private readonly IBlobRepository _blobRepository;
+    private readonly IImageInfoProvider _imageInfoProvider;
 
-    public ImageService(IBlobRepository blobRepository)
+    public ImageService(IBlobRepository blobRepository, IImageInfoProvider imageInfoProvider)
     {
         _blobRepository = blobRepository;
+        _imageInfoProvider = imageInfoProvider;
     }
 
     public async Task<MediaFileDto> DownloadPhotoAsync(string fileName)
@@ -32,7 +34,7 @@ public class ImageService : IImageService
     {
         try
         {
-            var imageInfo = await Image.DetectFormatAsync(fileDto.Data.ToStream());
+            var imageInfo = await _imageInfoProvider.DetectFormatAsync(fileDto.Data);
             var file = new MediaFile
             {
                 ContentType = fileDto.ContentType.StartsWith("image/") ? fileDto.ContentType : imageInfo.DefaultMimeType,
