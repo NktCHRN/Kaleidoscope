@@ -29,7 +29,6 @@ public class RefreshTokenService : IRefreshTokenService
             var userId = principal.GetId() ?? throw new EntityNotFoundException("No info about user id in the token");
             var refreshTokenDataModel = await _refreshTokenRepository.FirstOrDefaultAsync(new RefreshTokenByUserIdAndTokenSpec(userId, tokens.RefreshToken));
             if (refreshTokenDataModel is null
-                || refreshTokenDataModel.Token != tokens.RefreshToken
                 || refreshTokenDataModel.ExpiryTime <= _timeProvider.GetUtcNow())
             {
                 throw new EntityValidationFailedException("Invalid client request");
@@ -51,7 +50,7 @@ public class RefreshTokenService : IRefreshTokenService
     public async Task Revoke(Guid userId, string refreshToken)
     {
         var refreshTokenDataModel = await _refreshTokenRepository.FirstOrDefaultAsync(new RefreshTokenByUserIdAndTokenSpec(userId, refreshToken)) 
-            ?? throw new EntityNotFoundException("User was not found");
+            ?? throw new EntityNotFoundException("User or refresh token was not found");
 
         await _refreshTokenRepository.DeleteAsync(refreshTokenDataModel);
     }
