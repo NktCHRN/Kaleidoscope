@@ -123,7 +123,7 @@ public class PostService : IPostService
     {
         if (blog.UserId != userId)
         {
-            throw new EntityValidationFailedException("This post belongs to another user");
+            throw new EntityValidationFailedException("This blog belongs to another user");
         }
     }
 
