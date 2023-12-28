@@ -139,7 +139,7 @@ public class CustomWebApplicationFactory<TProgram>
         await _databaseSeeder.SeedAsync();
     }
 
-    public async Task ResetTestData()
+    public async Task ResetTestDataAsync()
     {
         await _blobStorageSeeder!.RestoreInitialAsync();
         await _databaseSeeder!.RestoreInitialAsync();
