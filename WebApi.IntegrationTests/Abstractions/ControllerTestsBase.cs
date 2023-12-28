@@ -3,24 +3,19 @@ using WebApi.IntegrationTests.TestDataHelpers;
 using Xunit;
 
 namespace WebApi.IntegrationTests.Abstractions;
+[Collection("Test collection")]
 public class ControllerTestsBase : IAsyncLifetime
 {
-    protected HttpClient HttpClient;
-    protected BlobStorageTestDataHelper BlobStorageTestDataHelper;
-    protected DatabaseTestDataHelper DatabaseTestDataHelper;
-    protected TestTimeProvider TimeProvider;
-    protected TestAuthUser User;
+    protected HttpClient HttpClient => _factory.HttpClient;
+    protected BlobStorageTestDataHelper BlobStorageTestDataHelper => _factory.BlobStorageDataHelper;
+    protected DatabaseTestDataHelper DatabaseTestDataHelper => _factory.DatabaseTestDataHelper;
+    protected TestTimeProvider TimeProvider => _factory.TestTimeProvider;
+    protected TestAuthUser User => _factory.TestUser;
 
-    private readonly CustomWebApplicationFactory<Program> _factory;
+    private readonly CustomWebApplicationFactory _factory;
 
-    public ControllerTestsBase(CustomWebApplicationFactory<Program> factory)
+    public ControllerTestsBase(CustomWebApplicationFactory factory)
     {
-        HttpClient = factory.HttpClient;
-        BlobStorageTestDataHelper = factory.BlobStorageDataHelper;
-        DatabaseTestDataHelper = factory.DatabaseTestDataHelper;
-        TimeProvider = factory.TestTimeProvider;
-        User = factory.TestUser;
-
         _factory = factory;
     }
 

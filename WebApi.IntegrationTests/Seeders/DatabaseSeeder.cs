@@ -22,23 +22,17 @@ public class DatabaseSeeder : ISeeder
     {
         var context = _contextFactory(scope);
 
+        await context.Database.MigrateAsync();
         await context.AddRangeAsync(_testDataHelper.GetAllEntities());
         await context.SaveChangesAsync();
-
-        var connection = context.Database.GetDbConnection();
-        await connection.OpenAsync();
-        _respawner ??= await Respawner.CreateAsync(connection, new RespawnerOptions
-            {
-                DbAdapter = DbAdapter.SqlServer,
-                SchemasToInclude = ["dbo"]
-            });
+        _respawner ??= await Respawner.CreateAsync(context.Database.GetConnectionString()!, new RespawnerOptions{});
     }
 
     public async Task RestoreInitialAsync(IServiceScope scope)
     {
+        var rp1 = _respawner.ReseedSql;
+        var rp2 = _respawner.DeleteSql;
         var context = _contextFactory(scope);
-        var connection = context.Database.GetDbConnection();
-        await connection.OpenAsync();
-        await _respawner!.ResetAsync(connection);
+        await _respawner!.ResetAsync(context.Database.GetConnectionString()!);
     }
 }

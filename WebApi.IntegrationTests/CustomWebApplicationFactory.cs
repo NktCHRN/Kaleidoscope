@@ -18,8 +18,8 @@ using WebApi.IntegrationTests.TestDataHelpers;
 using Xunit;
 
 namespace WebApi.IntegrationTests;
-public class CustomWebApplicationFactory<TProgram>
-    : WebApplicationFactory<TProgram>, IAsyncLifetime where TProgram : class
+public class CustomWebApplicationFactory
+    : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly MsSqlContainer _msSqlContainer
         = new MsSqlBuilder().Build();
@@ -47,6 +47,7 @@ public class CustomWebApplicationFactory<TProgram>
         {
             ConfigureDatabase(services);
             ConfigureAzure(services);
+            ConfigureStubs(services);
 
         });
         builder.ConfigureAppConfiguration((_, configBuilder) =>

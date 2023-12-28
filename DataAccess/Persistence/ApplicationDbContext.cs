@@ -14,7 +14,6 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-        Database.Migrate();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

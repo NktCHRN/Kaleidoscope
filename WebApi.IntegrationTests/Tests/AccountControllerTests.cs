@@ -2,12 +2,10 @@ using WebApi.IntegrationTests.Abstractions;
 using Xunit;
 
 namespace WebApi.IntegrationTests.Tests;
-[Collection("Test collection")]
 public class AccountControllerTests : ControllerTestsBase
 {
-    public AccountControllerTests(CustomWebApplicationFactory<Program> factory) : base(factory)
+    public AccountControllerTests(CustomWebApplicationFactory factory) : base(factory)
     {
-        var temp = factory.HttpClient;
     }
 
     [Fact]
@@ -18,6 +16,12 @@ public class AccountControllerTests : ControllerTestsBase
 
     [Fact]
     public void Test2()
+    {
+
+    }
+
+    [Fact]
+    public void Test3()
     {
 
     }
