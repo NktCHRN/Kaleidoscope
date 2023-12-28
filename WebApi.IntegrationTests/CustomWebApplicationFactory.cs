@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Bogus;
 using DataAccess.Options;
 using DataAccess.Persistence;
 using Microsoft.AspNetCore.Authentication;
@@ -40,6 +41,11 @@ public class CustomWebApplicationFactory
 
     public TestTimeProvider TestTimeProvider { get; } = new();
     public TestAuthUser TestUser { get; } = new();
+
+    public CustomWebApplicationFactory()
+    {
+        Randomizer.Seed = new Random(8675309);
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
