@@ -40,5 +40,7 @@ public class BlobStorageSeeder : ISeeder
         {
             await client.DeleteBlobAsync(blob.Name);
         }
+
+        await SeedAsync();
     }
 }
