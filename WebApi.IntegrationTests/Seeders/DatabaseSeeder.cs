@@ -25,14 +25,14 @@ public class DatabaseSeeder : ISeeder
         await context.Database.MigrateAsync();
         await context.AddRangeAsync(_testDataHelper.GetAllEntities());
         await context.SaveChangesAsync();
-        _respawner ??= await Respawner.CreateAsync(context.Database.GetConnectionString()!, new RespawnerOptions{});
+        _respawner ??= await Respawner.CreateAsync(context.Database.GetConnectionString()!, new RespawnerOptions());
     }
 
     public async Task RestoreInitialAsync(IServiceScope scope)
     {
-        var rp1 = _respawner.ReseedSql;
-        var rp2 = _respawner.DeleteSql;
         var context = _contextFactory(scope);
         await _respawner!.ResetAsync(context.Database.GetConnectionString()!);
+        await context.AddRangeAsync(_testDataHelper.GetAllEntities());
+        await context.SaveChangesAsync();
     }
 }
