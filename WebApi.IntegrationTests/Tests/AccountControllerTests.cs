@@ -1,10 +1,11 @@
+using WebApi.IntegrationTests.Abstractions;
 using Xunit;
 
 namespace WebApi.IntegrationTests.Tests;
 [Collection("Test collection")]
-public class AccountControllerTests : IAsyncLifetime
+public class AccountControllerTests : ControllerTestsBase
 {
-    public AccountControllerTests(CustomWebApplicationFactory<Program> factory)
+    public AccountControllerTests(CustomWebApplicationFactory<Program> factory) : base(factory)
     {
         var temp = factory.HttpClient;
     }
@@ -15,14 +16,9 @@ public class AccountControllerTests : IAsyncLifetime
 
     }
 
-    public Task InitializeAsync()
+    [Fact]
+    public void Test2()
     {
-        return Task.CompletedTask;
-    }
 
-
-    public Task DisposeAsync()
-    {
-        return Task.CompletedTask;
     }
 }

@@ -1,27 +1,30 @@
 ﻿using Azure.Storage.Blobs;
+using Microsoft.Extensions.DependencyInjection;
 using WebApi.IntegrationTests.Abstractions;
 using WebApi.IntegrationTests.TestDataHelpers;
 
 namespace WebApi.IntegrationTests.Seeders;
 public class BlobStorageSeeder : ISeeder
 {
-    private readonly BlobServiceClient _blobServiceClient;
+    private readonly Func<IServiceScope, BlobServiceClient> _blobServiceClientFactory;
     private readonly BlobStorageTestDataHelper _testDataHelper;
     private readonly string _blobContainerName;
     private bool _firstSeed = true;
 
-    public BlobStorageSeeder(BlobServiceClient blobServiceClient, BlobStorageTestDataHelper testDataHelper, string containerName)
+    public BlobStorageSeeder(Func<IServiceScope, BlobServiceClient> blobServiceClientFactory, BlobStorageTestDataHelper testDataHelper, string containerName)
     {
-        _blobServiceClient = blobServiceClient;
+        _blobServiceClientFactory = blobServiceClientFactory;
         _testDataHelper = testDataHelper;
         _blobContainerName = containerName;
     }
 
-    public async Task SeedAsync()
+    public async Task SeedAsync(IServiceScope scope)
     {
+        var blobServiceClient = _blobServiceClientFactory(scope);
+
         var client = _firstSeed 
-            ? (await _blobServiceClient.CreateBlobContainerAsync(_blobContainerName)).Value 
-            : _blobServiceClient.GetBlobContainerClient(_blobContainerName);
+            ? (await blobServiceClient.CreateBlobContainerAsync(_blobContainerName)).Value 
+            : blobServiceClient.GetBlobContainerClient(_blobContainerName);
 
         foreach (var (fileName, hash) in _testDataHelper.FileNameToHash)
         {
@@ -32,15 +35,16 @@ public class BlobStorageSeeder : ISeeder
         _firstSeed = false;
     }
 
-    public async Task RestoreInitialAsync()
+    public async Task RestoreInitialAsync(IServiceScope scope)
     {
-        var client = _blobServiceClient.GetBlobContainerClient(_blobContainerName);
+        var blobServiceClient = _blobServiceClientFactory(scope);
+        var client = blobServiceClient.GetBlobContainerClient(_blobContainerName);
         var blobs = client.GetBlobs();
         foreach (var blob in blobs)
         {
             await client.DeleteBlobAsync(blob.Name);
         }
 
-        await SeedAsync();
+        await SeedAsync(scope);
     }
 }

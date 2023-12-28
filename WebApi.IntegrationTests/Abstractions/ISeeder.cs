@@ -1,6 +1,8 @@
-﻿namespace WebApi.IntegrationTests.Abstractions;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace WebApi.IntegrationTests.Abstractions;
 public interface ISeeder
 {
-    Task SeedAsync();
-    Task RestoreInitialAsync();
+    Task SeedAsync(IServiceScope scope);
+    Task RestoreInitialAsync(IServiceScope scope);
 }

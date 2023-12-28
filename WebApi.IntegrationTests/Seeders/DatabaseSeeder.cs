@@ -1,6 +1,6 @@
-﻿using System.Data;
-using System.Data.Common;
-using DataAccess.Persistence;
+﻿using DataAccess.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Respawn;
 using WebApi.IntegrationTests.Abstractions;
 using WebApi.IntegrationTests.TestDataHelpers;
@@ -8,33 +8,37 @@ using WebApi.IntegrationTests.TestDataHelpers;
 namespace WebApi.IntegrationTests.Seeders;
 public class DatabaseSeeder : ISeeder
 {
-    private readonly ApplicationDbContext _context;
+    private readonly Func<IServiceScope, ApplicationDbContext> _contextFactory;
     private readonly DatabaseTestDataHelper _testDataHelper;
     private Respawner? _respawner;
-    private readonly DbConnection _connection;
 
-    public DatabaseSeeder(ApplicationDbContext context, DatabaseTestDataHelper testDataHelper, DbConnection dbConnection)
+    public DatabaseSeeder(Func<IServiceScope, ApplicationDbContext> contextFactory, DatabaseTestDataHelper testDataHelper)
     {
-        _context = context;
+        _contextFactory = contextFactory;
         _testDataHelper = testDataHelper;
-
-        _connection = dbConnection;
     }
 
-    public async Task SeedAsync()
+    public async Task SeedAsync(IServiceScope scope)
     {
-        await _context.AddRangeAsync(_testDataHelper.GetAllEntities());
-        await _context.SaveChangesAsync();
+        var context = _contextFactory(scope);
 
-        _respawner ??= await Respawner.CreateAsync(_connection, new RespawnerOptions
+        await context.AddRangeAsync(_testDataHelper.GetAllEntities());
+        await context.SaveChangesAsync();
+
+        var connection = context.Database.GetDbConnection();
+        await connection.OpenAsync();
+        _respawner ??= await Respawner.CreateAsync(connection, new RespawnerOptions
             {
                 DbAdapter = DbAdapter.SqlServer,
                 SchemasToInclude = ["dbo"]
             });
     }
 
-    public async Task RestoreInitialAsync()
+    public async Task RestoreInitialAsync(IServiceScope scope)
     {
-        await _respawner!.ResetAsync(_connection);
+        var context = _contextFactory(scope);
+        var connection = context.Database.GetDbConnection();
+        await connection.OpenAsync();
+        await _respawner!.ResetAsync(connection);
     }
 }

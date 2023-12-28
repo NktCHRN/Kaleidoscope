@@ -1,9 +1,7 @@
-﻿using System.Data;
-using System.Data.Common;
-using Azure.Storage.Blobs;
-using BusinessLogic.Abstractions;
+﻿using Azure.Storage.Blobs;
 using DataAccess.Options;
 using DataAccess.Persistence;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -15,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Testcontainers.Azurite;
 using Testcontainers.MsSql;
 using WebApi.IntegrationTests.Seeders;
+using WebApi.IntegrationTests.Stubs;
 using WebApi.IntegrationTests.TestDataHelpers;
 using Xunit;
 
@@ -29,11 +28,9 @@ public class CustomWebApplicationFactory<TProgram>
         .WithImage("mcr.microsoft.com/azure-storage/azurite:latest")
         .Build();
 
-    private const string s_blobStorageContainerName = "kaleidoscopetest1";
+    private const string BlobStorageContainerName = "kaleidoscopetest1";
 
     public HttpClient HttpClient { get; private set; } = null!;
-
-    private DbConnection? _connection;
 
     public BlobStorageTestDataHelper BlobStorageDataHelper { get; } = new();
     public DatabaseTestDataHelper DatabaseTestDataHelper { get; } = new();
@@ -41,13 +38,16 @@ public class CustomWebApplicationFactory<TProgram>
     private BlobStorageSeeder? _blobStorageSeeder;
     private DatabaseSeeder? _databaseSeeder;
 
+    public TestTimeProvider TestTimeProvider { get; } = new();
+    public TestAuthUser TestUser { get; } = new();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
         {
             ConfigureDatabase(services);
             ConfigureAzure(services);
-            RemoveRolesSeeder(services);
+
         });
         builder.ConfigureAppConfiguration((_, configBuilder) =>
         {
@@ -101,54 +101,74 @@ public class CustomWebApplicationFactory<TProgram>
             clientBuilder.AddBlobServiceClient(_azuriteContainer.GetConnectionString());
         });
 
-        services.Configure<BlobStorageOptions>(opts => opts.ContainerName = s_blobStorageContainerName);
+        services.Configure<BlobStorageOptions>(opts => opts.ContainerName = BlobStorageContainerName);
     }
 
-    private void RemoveRolesSeeder(IServiceCollection services)
+    private void ConfigureStubs(IServiceCollection services)
     {
-        var descriptorType = typeof(IRoleSeeder);
-
-        var descriptor = services
-            .SingleOrDefault(s => s.ServiceType == descriptorType);
-
-        if (descriptor is not null)
+        var descriptorTypes = new[]
         {
-            services.Remove(descriptor);
+            typeof(TimeProvider)
+        };
+
+        foreach (var descriptorType in descriptorTypes)
+        {
+            var descriptor = services
+                .SingleOrDefault(s => s.ServiceType == descriptorType);
+
+            if (descriptor is not null)
+            {
+                services.Remove(descriptor);
+            }
         }
+
+        services.AddSingleton<TimeProvider>(_ => TestTimeProvider);
+        services.AddSingleton(_ => TestUser);
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = TestAuthHandler.SchemeName;
+                options.DefaultChallengeScheme = TestAuthHandler.SchemeName;
+                options.DefaultScheme = TestAuthHandler.SchemeName;
+            })
+            .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                TestAuthHandler.SchemeName, options => { });
     }
 
     public async Task InitializeAsync()
     {
         await _msSqlContainer.StartAsync();
         await _azuriteContainer.StartAsync();
-        HttpClient = CreateClient();
+
+        _blobStorageSeeder = new(
+            scope => scope.ServiceProvider.GetRequiredService<BlobServiceClient>(), 
+            BlobStorageDataHelper, 
+            BlobStorageContainerName);
+        _databaseSeeder = new(scope => scope.ServiceProvider.GetRequiredService<ApplicationDbContext>(), 
+            DatabaseTestDataHelper);
 
         using var scope = Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        _connection = dbContext.Database.GetDbConnection();
-        if (_connection.State != ConnectionState.Open)
-        {
-            await _connection.OpenAsync();
-        }
-        var blobServiceClient = scope.ServiceProvider.GetRequiredService<BlobServiceClient>();
+        await _blobStorageSeeder.SeedAsync(scope);
+        await _databaseSeeder.SeedAsync(scope);
 
-        _blobStorageSeeder = new(blobServiceClient, BlobStorageDataHelper, s_blobStorageContainerName);
-        _databaseSeeder = new(dbContext, DatabaseTestDataHelper, _connection);
-
-        await _blobStorageSeeder.SeedAsync();
-        await _databaseSeeder.SeedAsync();
+        HttpClient = CreateClient();
     }
 
     public async Task ResetTestDataAsync()
     {
-        await _blobStorageSeeder!.RestoreInitialAsync();
-        await _databaseSeeder!.RestoreInitialAsync();
+        using var scope = Services.CreateScope();
+        await _blobStorageSeeder!.RestoreInitialAsync(scope);
+        await _databaseSeeder!.RestoreInitialAsync(scope);
+    }
+
+    public void ResetStubs()
+    {
+        TestUser.Reset();
+        TestTimeProvider.Reset();
     }
 
     public new async Task DisposeAsync()
     {
         await _msSqlContainer.StopAsync();
         await _azuriteContainer.StopAsync();
-        await _connection!.DisposeAsync();
     }
 }
