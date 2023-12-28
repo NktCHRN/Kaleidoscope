@@ -14,6 +14,7 @@ public class DatabaseTestDataHelper
     public IReadOnlyList<Comment> Comments { get; }
     public IReadOnlyList<PostItem> PostItems { get; }
     public IReadOnlyList<Post> Posts { get; }
+    public IReadOnlyList<RefreshToken> RefreshTokens { get; }
 
     public DatabaseTestDataHelper()
     {
@@ -30,6 +31,7 @@ public class DatabaseTestDataHelper
         Comments = TestDataSerializer.Deserialize<Comment>("Comments.json", deserializeOptions);
         PostItems = TestDataSerializer.Deserialize<PostItem>("PostItems.json", deserializeOptions);
         Posts = TestDataSerializer.Deserialize<Post>("Posts.json", deserializeOptions);
+        RefreshTokens = TestDataSerializer.Deserialize<RefreshToken>("RefreshTokens.json", deserializeOptions);
     }
 
     public IEnumerable<object> GetAllEntities()
@@ -39,6 +41,7 @@ public class DatabaseTestDataHelper
             .Concat(Blogs)
             .Concat(Comments)
             .Concat(PostItems)
-            .Concat(Posts);
+            .Concat(Posts)
+            .Concat(RefreshTokens);
     }
 }
