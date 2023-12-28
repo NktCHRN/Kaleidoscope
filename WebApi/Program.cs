@@ -14,10 +14,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 
-    using (var serviceScope = app.Services.CreateScope())
+    if (bool.Parse(builder.Configuration["RoleSeederOptions:SeedRoles"]!))
     {
-        var roleSeeder = serviceScope.ServiceProvider.GetRequiredService<IRoleSeeder>();
-        await roleSeeder.SeedRolesAsync();
+        using (var serviceScope = app.Services.CreateScope())
+        {
+            var roleSeeder = serviceScope.ServiceProvider.GetRequiredService<IRoleSeeder>();
+            await roleSeeder.SeedRolesAsync();
+        }
     }
 }
 
@@ -30,3 +33,8 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{
+
+}
