@@ -18,6 +18,7 @@ public class ImagesControllerTests : ControllerTestsBase
     [Fact]
     public async Task DownloadImage_ReturnsImage_When_Success()
     {
+        User.IsAuthenticated = false;
         var imageName = BlobStorageTestDataHelper.HashToFileName.First().Key;
 
         var response = await HttpClient.GetAsync($"{BaseControllerUrl}{imageName}");
