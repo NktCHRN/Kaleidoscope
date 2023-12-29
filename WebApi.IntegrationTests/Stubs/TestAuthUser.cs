@@ -7,6 +7,7 @@ public class TestAuthUser
     public Guid UserId { get; set; }
     public string UserEmail { get; set; }
     public List<string> Roles { get; set; }
+    public bool IsAuthenticated { get; set; }
 
     public TestAuthUser()
     {
@@ -24,5 +25,6 @@ public class TestAuthUser
             RolesConstants.RegisteredViewer,
             RolesConstants.Author
         };
+        IsAuthenticated = true;
     }
 }

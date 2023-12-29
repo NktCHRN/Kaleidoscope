@@ -20,6 +20,11 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        if (!_mockAuthUser.IsAuthenticated)
+        {
+            return Task.FromResult(AuthenticateResult.Fail("Test auth failed"));
+        }
+
         var claims = new List<Claim>
         {
             new (ClaimTypes.NameIdentifier, _mockAuthUser.UserId.ToString()), 
