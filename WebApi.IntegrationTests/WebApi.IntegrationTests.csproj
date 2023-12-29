@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <Folder Include="TestData\Blob\" />
+    <Folder Include="TestData\Unseeded\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +39,9 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<None Update="TestData\Unseeded\iius.drawio.png">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="TestData\Blob\usecase.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
