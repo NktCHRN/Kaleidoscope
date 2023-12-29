@@ -125,6 +125,7 @@ public class AccountControllerTests : ControllerTestsBase
     public async Task UpdateDetails_ReturnsNewDetails_When_Success()
     {
         var request = _updateDetailsFaker.Generate();
+        request.AvatarLocalFileName = BlobStorageTestDataHelper.HashToFileName.First().Key;
 
         var response = await HttpClient.PutAsJsonAsync($"{BaseControllerUrl}details", request);
 
