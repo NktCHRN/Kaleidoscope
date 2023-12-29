@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using Bogus;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using WebApi.IntegrationTests.Abstractions;
 using WebApi.Models.Requests.Blog;
 using WebApi.Models.Responses.Blog;
