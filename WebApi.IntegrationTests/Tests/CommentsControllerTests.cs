@@ -99,7 +99,7 @@ public class CommentsControllerTests : ControllerTestsBase
     }
 
     [Fact]
-    public async Task GetPagedByBlogId_ReturnsCommentsByBlogId_When_Success()
+    public async Task GetPagedByPostId_ReturnsCommentsByPostId_When_Success()
     {
         User.IsAuthenticated = false;
         var postId = Guid.Parse("DCE0B429-6855-401E-F743-08DC05E8BF4A");
