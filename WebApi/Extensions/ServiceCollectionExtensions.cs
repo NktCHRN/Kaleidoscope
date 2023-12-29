@@ -19,6 +19,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace WebApi.Extensions;
 
@@ -85,6 +86,8 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
         return services.AddScoped<IJwtTokenProvider, JwtTokenProvider>()
+            .AddSingleton<IImageInfoProvider, ImageInfoProvider>()
+            .AddSingleton<IHashedFileNameProvider, HashedFileNameProvider>()
             .AddScoped<IRefreshTokenService, RefreshTokenService>()
             .AddScoped<IAccountService, AccountService>()
             .AddSingleton<IImageService, ImageService>()
@@ -142,7 +145,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddApiControllers(this IServiceCollection services)
     {
-        services.AddControllers();
+        services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         return services;
     }
 

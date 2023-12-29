@@ -10,25 +10,27 @@ using System.Text;
 namespace BusinessLogic.Providers;
 public class JwtTokenProvider : IJwtTokenProvider
 {
-    private readonly IOptions<JwtBearerConfigOptions> _options;
+    private readonly JwtBearerConfigOptions _options;
+    private readonly TimeProvider _timeProvider;
 
-    public JwtTokenProvider(IOptions<JwtBearerConfigOptions> options)
+    public JwtTokenProvider(IOptions<JwtBearerConfigOptions> options, TimeProvider timeProvider)
     {
-        _options = options;
+        _options = options.Value;
+        _timeProvider = timeProvider;
     }
 
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
-        var now = DateTime.UtcNow;
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
         var jwt = new JwtSecurityToken(
-                issuer: _options.Value.Issuer,
-                audience: _options.Value.Audience,
+                issuer: _options.Issuer,
+                audience: _options.Audience,
                 notBefore: now,
                 claims: claims,
-                expires: now.Add(TimeSpan.FromMinutes(_options.Value.LifeTime)),
+                expires: now.Add(TimeSpan.FromMinutes(_options.LifeTime)),
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(
-                        Encoding.ASCII.GetBytes(_options.Value.Secret)),
+                        Encoding.ASCII.GetBytes(_options.Secret)),
                     SecurityAlgorithms.HmacSha256));
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
@@ -46,12 +48,12 @@ public class JwtTokenProvider : IJwtTokenProvider
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = _options.Value.Issuer,
+            ValidIssuer = _options.Issuer,
 
             ValidateAudience = true,
-            ValidAudience = _options.Value.Audience,
+            ValidAudience = _options.Audience,
 
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.Value.Secret)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_options.Secret)),
             ValidateIssuerSigningKey = true,
 
             ValidateLifetime = false

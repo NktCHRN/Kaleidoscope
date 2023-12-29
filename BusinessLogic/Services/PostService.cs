@@ -16,8 +16,9 @@ public class PostService : IPostService
     private readonly IValidator<CreatePostDto> _createValidator;
     private readonly IValidator<UpdatePostDto> _updateValidator;
     private readonly IValidator<PaginationParametersDto> _paginationValidator;
+    private readonly TimeProvider _timeProvider;
 
-    public PostService(IRepository<Blog> blogRepository, IRepository<Post> postRepository, IMapper mapper, IValidator<CreatePostDto> createValidator, IValidator<UpdatePostDto> updateValidator, IValidator<PaginationParametersDto> paginationValidator)
+    public PostService(IRepository<Blog> blogRepository, IRepository<Post> postRepository, IMapper mapper, IValidator<CreatePostDto> createValidator, IValidator<UpdatePostDto> updateValidator, IValidator<PaginationParametersDto> paginationValidator, TimeProvider timeProvider)
     {
         _blogRepository = blogRepository;
         _postRepository = postRepository;
@@ -25,6 +26,7 @@ public class PostService : IPostService
         _createValidator = createValidator;
         _updateValidator = updateValidator;
         _paginationValidator = paginationValidator;
+        _timeProvider = timeProvider;
     }
 
     public async Task<PostDto> Create(Guid userId, Guid blogId, CreatePostDto postDto)
@@ -43,7 +45,7 @@ public class PostService : IPostService
         {
             Header = postDto.Header,
             Subheader = postDto.Subheader,
-            CreatedAt = DateTimeOffset.UtcNow,
+            CreatedAt = _timeProvider.GetUtcNow(),
             Blog = blog
         };
         for (var i = 0; i < postDto.PostItems.Count; i++)
@@ -121,7 +123,7 @@ public class PostService : IPostService
     {
         if (blog.UserId != userId)
         {
-            throw new EntityValidationFailedException("This post belongs to another user");
+            throw new EntityValidationFailedException("This blog belongs to another user");
         }
     }
 

@@ -19,8 +19,9 @@ public class BlogService : IBlogService
     private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
     private readonly IBlobRepository _blobRepository;
+    private readonly TimeProvider _timeProvider;
 
-    public BlogService(IValidator<CreateBlogDto> createValidator, IValidator<UpdateBlogDto> updateValidator, IRepository<Blog> blogRepository, UserManager<User> userManager, IMapper mapper, IRepository<User> userRepository, IBlobRepository blobRepository)
+    public BlogService(IValidator<CreateBlogDto> createValidator, IValidator<UpdateBlogDto> updateValidator, IRepository<Blog> blogRepository, UserManager<User> userManager, IMapper mapper, IRepository<User> userRepository, IBlobRepository blobRepository, TimeProvider timeProvider)
     {
         _createValidator = createValidator;
         _updateValidator = updateValidator;
@@ -29,6 +30,7 @@ public class BlogService : IBlogService
         _mapper = mapper;
         _userRepository = userRepository;
         _blobRepository = blobRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<BlogDto> Create(Guid userId, CreateBlogDto createBlogDto)
@@ -44,7 +46,7 @@ public class BlogService : IBlogService
 
         if (user.Blog is not null)
         {
-            throw new EntityValidationFailedException("User already has a blog.");
+            throw new EntityAlreadyExistsException("User already has a blog.");
         }
 
         var tag = PrepareTag(createBlogDto.Tag);
@@ -57,7 +59,7 @@ public class BlogService : IBlogService
         user.Blog = new Blog
         {
             AvatarLocalFileName = user.AvatarLocalFileName,
-            CreatedAt = DateTimeOffset.UtcNow,
+            CreatedAt = _timeProvider.GetUtcNow(),
             Description = createBlogDto.Description,
             Tag = tag,
             Name = user.Name
@@ -113,7 +115,7 @@ public class BlogService : IBlogService
         return _mapper.Map<BlogDto>(blog);
     }
 
-    public async Task<BlogDto> GetById(string tag)
+    public async Task<BlogDto> GetByTag(string tag)
     {
         tag = PrepareTag(tag);
         var blog = await _blogRepository.FirstOrDefaultAsync(new BlogByTagSpec(tag))

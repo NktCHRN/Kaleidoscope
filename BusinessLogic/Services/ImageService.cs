@@ -9,10 +9,14 @@ namespace BusinessLogic.Services;
 public class ImageService : IImageService
 {
     private readonly IBlobRepository _blobRepository;
+    private readonly IImageInfoProvider _imageInfoProvider;
+    private readonly IHashedFileNameProvider _hashedFileNameProvider;
 
-    public ImageService(IBlobRepository blobRepository)
+    public ImageService(IBlobRepository blobRepository, IImageInfoProvider imageInfoProvider, IHashedFileNameProvider hashedFileNameProvider)
     {
         _blobRepository = blobRepository;
+        _imageInfoProvider = imageInfoProvider;
+        _hashedFileNameProvider = hashedFileNameProvider;
     }
 
     public async Task<MediaFileDto> DownloadPhotoAsync(string fileName)
@@ -32,15 +36,16 @@ public class ImageService : IImageService
     {
         try
         {
-            var imageInfo = await Image.DetectFormatAsync(fileDto.Data.ToStream());
+            var imageInfo = await _imageInfoProvider.DetectFormatAsync(fileDto.Data);
+            var fileName = _hashedFileNameProvider.GenerateName(fileDto.Data, fileDto.Name);
             var file = new MediaFile
             {
                 ContentType = fileDto.ContentType.StartsWith("image/") ? fileDto.ContentType : imageInfo.DefaultMimeType,
                 Data = fileDto.Data,
-                Name = fileDto.Name,
+                Name = fileName,
             };
-            var result = await _blobRepository.UploadPhotoAsync(file);
-            return result;
+            await _blobRepository.UploadPhotoAsync(file);
+            return fileName;
         }
         catch (InvalidImageContentException ex)
         {

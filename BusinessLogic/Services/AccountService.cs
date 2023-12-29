@@ -19,23 +19,25 @@ public class AccountService : IAccountService
     private readonly UserManager<User> _userManager;
     private readonly IValidator<RegisterAccountDto> _registerValidator;
     private readonly IRepository<RefreshToken> _refreshTokenRepository;
-    private readonly IOptions<TokenProvidersOptions> _tokenProvidersOptions;
+    private readonly TokenProvidersOptions _tokenProvidersOptions;
     private readonly IRepository<User> _userRepository;
     private readonly IValidator<UpdateUserDto> _updateUserValidator;
     private readonly IBlobRepository _blobRepository;
     private readonly IMapper _mapper;
+    private readonly TimeProvider _timeProvider;
 
-    public AccountService(UserManager<User> userManager, IValidator<RegisterAccountDto> validator, IJwtTokenProvider jwtTokenProvider, IRepository<RefreshToken> refreshTokenRepository, IOptions<TokenProvidersOptions> tokenProvidersOptions, IRepository<User> userRepository, IValidator<UpdateUserDto> updateUserValidator, IMapper mapper, IBlobRepository blobRepository)
+    public AccountService(UserManager<User> userManager, IValidator<RegisterAccountDto> validator, IJwtTokenProvider jwtTokenProvider, IRepository<RefreshToken> refreshTokenRepository, IOptions<TokenProvidersOptions> tokenProvidersOptions, IRepository<User> userRepository, IValidator<UpdateUserDto> updateUserValidator, IMapper mapper, IBlobRepository blobRepository, TimeProvider timeProvider)
     {
         _userManager = userManager;
         _registerValidator = validator;
         _jwtTokenProvider = jwtTokenProvider;
         _refreshTokenRepository = refreshTokenRepository;
-        _tokenProvidersOptions = tokenProvidersOptions;
+        _tokenProvidersOptions = tokenProvidersOptions.Value;
         _userRepository = userRepository;
         _updateUserValidator = updateUserValidator;
         _mapper = mapper;
         _blobRepository = blobRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<LoginResultDto> Login(LoginAccountDto loginUserDto)
@@ -55,7 +57,7 @@ public class AccountService : IAccountService
         {
             Token = refreshToken,
             UserId = user!.Id,
-            ExpiryTime = DateTimeOffset.UtcNow.AddDays(_tokenProvidersOptions.Value.RefreshTokenLifetimeInDays)
+            ExpiryTime = _timeProvider.GetUtcNow().AddDays(_tokenProvidersOptions.RefreshTokenLifetimeInDays)
         });
         return new LoginResultDto()
         {
@@ -95,7 +97,7 @@ public class AccountService : IAccountService
             UserName = userDto.Email,
             Email = userDto.Email,
             Name = userDto.Name,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = _timeProvider.GetUtcNow()
         };
         var userCreationResults = await _userManager.CreateAsync(user, userDto.Password);
         if (!userCreationResults.Succeeded)
