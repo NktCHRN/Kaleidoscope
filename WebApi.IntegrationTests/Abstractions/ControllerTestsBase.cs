@@ -1,4 +1,5 @@
-﻿using WebApi.IntegrationTests.Stubs;
+﻿using DataAccess.Persistence;
+using WebApi.IntegrationTests.Stubs;
 using WebApi.IntegrationTests.TestDataHelpers;
 using Xunit;
 
@@ -18,6 +19,12 @@ public class ControllerTestsBase : IAsyncLifetime
     {
         _factory = factory;
     }
+
+    protected Task AccessDatabaseAsync(Func<ApplicationDbContext, Task> func) 
+        => _factory.AccessDatabaseAsync(func);
+
+    protected Task<T> AccessDatabaseAsync<T>(Func<ApplicationDbContext, Task<T>> func) =>
+        _factory.AccessDatabaseAsync(func);
 
     public Task InitializeAsync()
     {

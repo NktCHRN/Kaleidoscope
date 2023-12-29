@@ -167,6 +167,20 @@ public class CustomWebApplicationFactory
         await _databaseSeeder!.RestoreInitialAsync(scope);
     }
 
+    public async Task AccessDatabaseAsync(Func<ApplicationDbContext, Task> func)
+    {
+        using var scope = Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await func(context);
+    }
+
+    public async Task<T> AccessDatabaseAsync<T>(Func<ApplicationDbContext, Task<T>> func)
+    {
+        using var scope = Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        return await func(context);
+    }
+
     public void ResetStubs()
     {
         TestUser.Reset();

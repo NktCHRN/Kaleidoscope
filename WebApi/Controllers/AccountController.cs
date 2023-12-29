@@ -66,7 +66,7 @@ public class AccountController : ControllerBase
     }
 
     [Authorize]
-    [HttpDelete("tokens/revoke")]
+    [HttpPost("tokens/revoke")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ErrorResponse), 400)]
     [ProducesResponseType(typeof(ErrorResponse), 500)]
